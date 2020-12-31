@@ -8,9 +8,11 @@ namespace Luizanac.Infra.Http
     {
         public static string ExtractControllerName(this string path)
         {
-            var controllerNamePosition = 1;
+            _ = path ?? throw new ArgumentNullException(nameof(path));
+
+            var controllerNamePosition = 0;
             var defaultControllerName = "Home";
-            var splitedPath = path.Split("/");
+            var splitedPath = path.Split("/", StringSplitOptions.RemoveEmptyEntries);
 
             if (controllerNamePosition + 1 > splitedPath.Length || string.IsNullOrEmpty(splitedPath[controllerNamePosition]))
                 return defaultControllerName;
@@ -20,9 +22,11 @@ namespace Luizanac.Infra.Http
 
         public static string ExtractActionName(this string path)
         {
-            var actionNamePosition = 2;
+            _ = path ?? throw new ArgumentNullException(nameof(path));
+
+            var actionNamePosition = 1;
             var defaultActionName = "Index";
-            var splitedPath = path.Split("/");
+            var splitedPath = path.Split("/", StringSplitOptions.RemoveEmptyEntries);
 
             if (actionNamePosition + 1 > splitedPath.Length || string.IsNullOrEmpty(splitedPath[actionNamePosition]))
                 return defaultActionName;
