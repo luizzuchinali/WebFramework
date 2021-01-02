@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Public/**/*.*" CopyToOutputDirectory="PreserveNewest" />
-    <EmbeddedResource Include="Views/**/*.html" />
+    <EmbeddedResource Include="Views/**/*.html" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Luizanac.Infra.Http.Abstractions;
 using Luizanac.Infra.Http.Abstractions.Handlers;
 
 namespace Luizanac.Infra.Http.Handelrs
@@ -35,7 +36,7 @@ namespace Luizanac.Infra.Http.Handelrs
             var assembly = Assembly.GetExecutingAssembly();
 
             Console.WriteLine();
-            var publicDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Public", path.Remove(0, 1));
+            var publicDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DefaultDirectories.Public, path.Remove(0, 1));
             if (!File.Exists(publicDirectory))
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;

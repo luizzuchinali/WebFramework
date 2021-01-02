@@ -5,7 +5,7 @@ using Luizanac.Infra.Http;
 
 namespace Luizanac.Web.Controllers
 {
-    public class HomeController : ApplicationController
+    public class HomeController : ControllerBase
     {
         public async Task<string> Index()
         {

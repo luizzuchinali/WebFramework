@@ -8,7 +8,7 @@ using Luizanac.Service.Interfaces;
 
 namespace Luizanac.Web.Controllers
 {
-    public class ExchangeController : ApplicationController
+    public class ExchangeController : ControllerBase
     {
         private IExchangeService _exchangeService;
 
@@ -20,23 +20,15 @@ namespace Luizanac.Web.Controllers
         public async Task<string> MXN()
         {
             var value = _exchangeService.Calculate("MXN", "BRL", 1);
-            var resourceName = "Luizanac.Web.Views.Exchange.MXN.html";
-            var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-            using var streamReader = new StreamReader(resourceStream);
-            var content = await streamReader.ReadToEndAsync();
-            content = content.Replace("{BRLValue}", value.ToString());
-            return content;
+            var content = await View();
+            return content.Replace("{BRLValue}", value.ToString());
         }
 
         public async Task<string> USD()
         {
             var value = _exchangeService.Calculate("MXN", "BRL", 1);
-            var resourceName = "Luizanac.Web.Views.Exchange.USD.html";
-            var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-            using var streamReader = new StreamReader(resourceStream);
-            var content = await streamReader.ReadToEndAsync();
-            content = content.Replace("{BRLValue}", value.ToString());
-            return content;
+            var content = await View();
+            return content.Replace("{BRLValue}", value.ToString());
         }
     }
 }

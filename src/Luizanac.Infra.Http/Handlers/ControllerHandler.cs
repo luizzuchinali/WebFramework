@@ -36,7 +36,7 @@ namespace Luizanac.Infra.Http.Manipulators
 
             var controllerName = path.ExtractControllerName();
             var actionName = path.ExtractActionName();
-            var controllerTypesQuery = Assembly.GetEntryAssembly().GetTypes().Where(x => x.IsPublic && !x.IsAbstract && x.IsSubclassOf(typeof(ApplicationController)));
+            var controllerTypesQuery = Assembly.GetEntryAssembly().GetTypes().Where(x => x.IsPublic && !x.IsAbstract && x.IsSubclassOf(typeof(ControllerBase)));
             controllerTypesQuery = controllerTypesQuery.Where(x => x.Name.Replace("Controller", "").Equals(controllerName, StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
             if (controllerTypesQuery.Count() > 1)
