@@ -30,5 +30,22 @@ namespace Luizanac.Web.Controllers
             var content = await View();
             return content.Replace("{BRLValue}", value.ToString());
         }
+
+
+        //Exchange/Calculate?OriginCurrency=USD&DestinyCurrency=BRL&value=10
+        public async Task<string> Calculate(string originCurrency, string destinyCurrency, decimal value)
+        {
+            var finalValue = _exchangeService.Calculate(originCurrency, destinyCurrency, value);
+            var pageContent = await View();
+
+            return pageContent
+                .Replace("{OriginCurrency}", originCurrency)
+                .Replace("{OriginCurrencyValue}", value.ToString())
+                .Replace("{DestinyCurrency}", destinyCurrency)
+                .Replace("{DestinyCurrencyValue}", finalValue.ToString());
+        }
+
+        public async Task<string> Calculate(string destinyCurrency, decimal value)
+            => await Calculate("BRL", destinyCurrency, value);
     }
 }

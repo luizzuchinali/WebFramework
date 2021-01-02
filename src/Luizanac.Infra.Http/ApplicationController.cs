@@ -9,7 +9,6 @@ namespace Luizanac.Infra.Http
 {
     public abstract class ControllerBase
     {
-
         /// <summary>
         ///  Method to get a html file relative to the controller and action names.
         /// </summary>

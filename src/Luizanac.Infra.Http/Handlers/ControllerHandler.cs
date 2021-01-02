@@ -5,7 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Luizanac.Infra.Http.Abstractions.Bindings;
 using Luizanac.Infra.Http.Abstractions.Handlers;
+using Luizanac.Infra.Http.Bindings;
 
 namespace Luizanac.Infra.Http.Manipulators
 {
@@ -15,6 +17,7 @@ namespace Luizanac.Infra.Http.Manipulators
     public class ControllerHandler : IAsyncHttpHandler
     {
         public HttpListenerContext HttpContext { get; }
+        private readonly IActionBinder _actionBinder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ControllerHandler" /> class.
@@ -23,6 +26,8 @@ namespace Luizanac.Infra.Http.Manipulators
         public ControllerHandler(HttpListenerContext httpContext)
         {
             HttpContext = httpContext;
+
+            _actionBinder = new ActionBinder();
         }
 
         /// <summary>
@@ -32,10 +37,11 @@ namespace Luizanac.Infra.Http.Manipulators
         /// <returns>Returns a <see cref="Task"/> representing the async process</returns>
         public async Task HandleAsync(CancellationToken cancellationToken = default)
         {
-            var path = HttpContext.Request.Url.AbsolutePath;
+            var pathAndQuery = HttpContext.Request.Url.PathAndQuery;
+            var absolutePath = HttpContext.Request.Url.AbsolutePath;
 
-            var controllerName = path.ExtractControllerName();
-            var actionName = path.ExtractActionName();
+            var controllerName = absolutePath.ExtractControllerName();
+            var actionName = absolutePath.ExtractActionName();
             var controllerTypesQuery = Assembly.GetEntryAssembly().GetTypes().Where(x => x.IsPublic && !x.IsAbstract && x.IsSubclassOf(typeof(ControllerBase)));
             controllerTypesQuery = controllerTypesQuery.Where(x => x.Name.Replace("Controller", "").Equals(controllerName, StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
@@ -46,16 +52,11 @@ namespace Luizanac.Infra.Http.Manipulators
             if (controllerType is not null)
             {
                 var controllerInstance = Activator.CreateInstance(controllerType);
-                var action = controllerInstance.GetType().GetMethod(actionName);
-                if (action is not null)
-                {
-                    var isAwaitable = action.ReturnType.GetMethod(nameof(Task.GetAwaiter)) != null;
 
-                    object result = null;
-                    if (isAwaitable)
-                        result = await (dynamic)action.Invoke(controllerInstance, new object[] { });
-                    else
-                        result = action.Invoke(controllerInstance, new object[] { });
+                try
+                {
+                    var action = _actionBinder.BindAction(controllerInstance, actionName, pathAndQuery);
+                    var result = await action.Invoke(controllerInstance);
 
                     var resourceBuffer = Encoding.UTF8.GetBytes((string)result);
                     HttpContext.Response.ContentType = "text/html; charset=utf-8";//path.ResolveContentType();
@@ -63,7 +64,7 @@ namespace Luizanac.Infra.Http.Manipulators
                     HttpContext.Response.ContentLength64 = resourceBuffer.Length;
                     await HttpContext.Response.OutputStream.WriteAsync(resourceBuffer, 0, resourceBuffer.Length, cancellationToken);
                 }
-                else
+                catch (ArgumentException)
                 {
                     HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 }
