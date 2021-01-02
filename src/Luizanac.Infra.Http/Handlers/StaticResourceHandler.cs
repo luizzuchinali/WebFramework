@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Luizanac.Infra.Http.Abstractions;
 using Luizanac.Infra.Http.Abstractions.Handlers;
 
-namespace Luizanac.Infra.Http.Handelrs
+namespace Luizanac.Infra.Http.Handlers
 {
     /// <summary>
     /// Provide methods to manipulate <see cref="HttpListenerContext"/>. Focused to work with static resources.

@@ -9,7 +9,7 @@ using Luizanac.Infra.Http.Abstractions.Bindings;
 using Luizanac.Infra.Http.Abstractions.Handlers;
 using Luizanac.Infra.Http.Bindings;
 
-namespace Luizanac.Infra.Http.Manipulators
+namespace Luizanac.Infra.Http.Handlers
 {
     /// <summary>
     /// Provide methods to manipulate <see cref="HttpListenerContext"/>. Focused to work with controllers.

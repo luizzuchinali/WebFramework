@@ -40,10 +40,8 @@ namespace Luizanac.Infra.Http.Abstractions.Bindings
         }
 
 
-        /// <summary>
-        /// Method responsible to invoke the binded action
-        /// </summary>
-        /// <param name="controllerInstance">The controller that has the method declared</param>
+        /// <summary>Invoke the binded action</summary>
+        /// <param name="controllerInstance">Controller instance that contains the public methods</param>
         /// <returns>Returns an <see cref="object"/> containing the action response</returns>
         public async Task<object> Invoke(object controllerInstance)
         {

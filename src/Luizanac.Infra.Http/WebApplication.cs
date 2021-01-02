@@ -3,8 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Luizanac.Infra.Http.Abstractions.Handlers;
-using Luizanac.Infra.Http.Handelrs;
-using Luizanac.Infra.Http.Manipulators;
+using Luizanac.Infra.Http.Handlers;
 
 namespace Luizanac.Infra.Http
 {
