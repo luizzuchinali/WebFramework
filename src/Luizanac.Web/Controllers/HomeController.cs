@@ -1,5 +1,4 @@
-using System.IO;
-using System.Reflection;
+using System.Net;
 using System.Threading.Tasks;
 using Luizanac.Infra.Http;
 
@@ -7,13 +6,11 @@ namespace Luizanac.Web.Controllers
 {
     public class HomeController : ControllerBase
     {
-        public async Task<string> Index()
+        public HomeController(HttpListenerContext httpContext) : base(httpContext)
         {
-            var resourceName = "Luizanac.Web.Views.Home.Index.html";
-            var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-            using var streamReader = new StreamReader(resourceStream);
-            var content = await streamReader.ReadToEndAsync();
-            return content;
         }
+
+        public async Task<string> Index() => await View();
+
     }
 }

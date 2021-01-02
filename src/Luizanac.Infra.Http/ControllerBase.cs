@@ -1,7 +1,10 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Luizanac.Infra.Http.Abstractions;
 
@@ -9,6 +12,14 @@ namespace Luizanac.Infra.Http
 {
     public abstract class ControllerBase
     {
+        //Get by constructor injection
+        protected HttpListenerContext HttpContext { get; private set; }
+
+        public ControllerBase(HttpListenerContext httpContext)
+        {
+            HttpContext = httpContext;
+        }
+
         /// <summary>
         ///  Method to get a html file relative to the controller and action names.
         /// </summary>
@@ -39,6 +50,28 @@ namespace Luizanac.Infra.Http
             return await File.ReadAllTextAsync(filePath, Encoding.UTF8);
         }
 
+        /// <summary>
+        /// Convert view marked props with model props
+        /// </summary>
+        /// <param name="model">Model that will be used to process the view</param>
+        /// <param name="actionName">Param to get the action name that called this method</param>
+        /// <param name="fileRelativePath">If especified, will override method default behavior. Can pass the file extension or not.</param>
+        /// <returns>Returns the html in string format</returns>
+        protected async Task<string> View(object model, [CallerMemberName] string actionName = null, string fileRelativePath = null)
+        {
+            var content = await View(actionName, fileRelativePath);
+            var modelProperties = model.GetType().GetProperties();
+
+            var regex = new Regex("\\{(.*?)\\}");
+            var matches = regex.Matches(content);
+            content = regex.Replace(content, (match) =>
+            {
+                var prop = match.Groups[1].Value;
+                var modelProp = modelProperties.Single(x => x.Name.Equals(prop, StringComparison.InvariantCultureIgnoreCase));
+                return modelProp.GetValue(model)?.ToString();
+            });
+            return content;
+        }
 
     }
 }

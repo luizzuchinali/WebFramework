@@ -35,7 +35,6 @@ namespace Luizanac.Infra.Http.Handlers
             var path = HttpContext.Request.Url.AbsolutePath;
             var assembly = Assembly.GetExecutingAssembly();
 
-            Console.WriteLine();
             var publicDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DefaultDirectories.Public, path.Remove(0, 1));
             if (!File.Exists(publicDirectory))
             {

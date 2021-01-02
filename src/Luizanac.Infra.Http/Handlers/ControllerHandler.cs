@@ -51,7 +51,7 @@ namespace Luizanac.Infra.Http.Handlers
             var controllerType = controllerTypesQuery.SingleOrDefault();
             if (controllerType is not null)
             {
-                var controllerInstance = Activator.CreateInstance(controllerType);
+                var controllerInstance = Activator.CreateInstance(controllerType, new object[] { HttpContext });
 
                 try
                 {
