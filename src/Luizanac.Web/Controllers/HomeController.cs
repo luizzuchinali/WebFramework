@@ -6,7 +6,7 @@ namespace Luizanac.Web.Controllers
 {
     public class HomeController : ControllerBase
     {
-        public HomeController(HttpListenerContext httpContext) : base(httpContext)
+        public HomeController()
         {
         }
 

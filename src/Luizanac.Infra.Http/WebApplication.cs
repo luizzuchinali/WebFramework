@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Luizanac.Infra.Http.Abstractions.Handlers;
 using Luizanac.Infra.Http.Handlers;
+using Luizanac.Infra.IoC;
+using Luizanac.Infra.IoC.Abstractions.Interfaces;
 
 namespace Luizanac.Infra.Http
 {
@@ -14,11 +16,17 @@ namespace Luizanac.Infra.Http
     public class WebApplication
     {
         private readonly string[] _routePrefixes;
+        private static readonly IDIContainer _container = new DIContainer();
 
         public WebApplication(string[] routePrefixes)
         {
             _ = routePrefixes ?? throw new ArgumentNullException(nameof(routePrefixes));
             _routePrefixes = routePrefixes;
+        }
+
+        public void Configure(Action<IDIContainer> action)
+        {
+            action.Invoke(_container);
         }
 
         /// <summary>
@@ -46,7 +54,7 @@ namespace Luizanac.Infra.Http
             if (context.Request.Url.AbsolutePath.IsStaticResource())
                 handler = new StaticResourceHandler(context);
             else
-                handler = new ControllerHandler(context);
+                handler = new ControllerHandler(context, _container);
 
             await handler.HandleAsync();
 

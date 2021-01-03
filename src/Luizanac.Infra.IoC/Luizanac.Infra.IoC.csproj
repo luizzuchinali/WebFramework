@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Luizanac.Infra.Http.Abstractions\Luizanac.Infra.Http.Abstractions.csproj" />
     <ProjectReference Include="..\Luizanac.Infra.IoC.Abstractions\Luizanac.Infra.IoC.Abstractions.csproj" />
-    <ProjectReference Include="..\Luizanac.Infra.IoC\Luizanac.Infra.IoC.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

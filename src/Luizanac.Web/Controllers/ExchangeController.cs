@@ -1,9 +1,5 @@
-using System;
-using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Luizanac.Infra.Http;
-using Luizanac.Service.Exchange;
 using Luizanac.Service.Interfaces;
 using Luizanac.Web.ViewModels;
 
@@ -13,9 +9,9 @@ namespace Luizanac.Web.Controllers
     {
         private IExchangeService _exchangeService;
 
-        public ExchangeController(HttpListenerContext httpContext) : base(httpContext)
+        public ExchangeController(IExchangeService exchangeService)
         {
-            _exchangeService = new ExchangeService();
+            _exchangeService = exchangeService;
         }
 
         public async Task<string> Calculate(string originCurrency, string destinyCurrency, decimal value)
@@ -34,5 +30,6 @@ namespace Luizanac.Web.Controllers
 
         public async Task<string> Calculate(string destinyCurrency, decimal value)
             => await Calculate("BRL", destinyCurrency, value);
+
     }
 }
