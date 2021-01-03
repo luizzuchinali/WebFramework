@@ -17,13 +17,21 @@ namespace Luizanac.Infra.Http
     {
         private readonly string[] _routePrefixes;
         private static readonly IDIContainer _container = new DIContainer();
+        private readonly HttpListener _httpListener = new HttpListener();
 
         public WebApplication(string[] routePrefixes)
         {
             _ = routePrefixes ?? throw new ArgumentNullException(nameof(routePrefixes));
             _routePrefixes = routePrefixes;
+
+            foreach (var routePrefix in _routePrefixes)
+                _httpListener.Prefixes.Add(routePrefix);
         }
 
+        /// <summary>
+        /// Used to add some dependencies to container
+        /// </summary>
+        /// <param name="action">An <see cref="Action"/> of <see cref="IDIContainer"/></param>
         public void Configure(Action<IDIContainer> action)
         {
             action.Invoke(_container);
@@ -32,23 +40,19 @@ namespace Luizanac.Infra.Http
         /// <summary>
         /// Initilize the application server
         /// </summary>
-        /// <param name="cancellationToken">The cancellation token to abort the process</param>
-        /// <returns>Returns a <see cref="Task" /> representing the async process.</returns>
-        public async Task InitAsync(CancellationToken cancellationToken = default)
+        public void Init()
         {
-            while (true & !cancellationToken.IsCancellationRequested)
-                await ApplicationLoop();
+            _httpListener.Start();
+            while (true)
+            {
+                var result = _httpListener.BeginGetContext(async (IAsyncResult res) => await OnContext(res), _httpListener);
+                result.AsyncWaitHandle.WaitOne();
+            }
         }
 
-        private async Task ApplicationLoop(CancellationToken cancellationToken = default)
+        public async Task OnContext(IAsyncResult result)
         {
-            var httpListener = new HttpListener();
-            foreach (var routePrefix in _routePrefixes)
-                httpListener.Prefixes.Add(routePrefix);
-
-            httpListener.Start();
-
-            var context = await httpListener.GetContextAsync();
+            var context = _httpListener.EndGetContext(result);
 
             IAsyncHttpHandler handler;
             if (context.Request.Url.AbsolutePath.IsStaticResource())
@@ -57,8 +61,6 @@ namespace Luizanac.Infra.Http
                 handler = new ControllerHandler(context, _container);
 
             await handler.HandleAsync();
-
-            httpListener.Stop();
         }
     }
 }
