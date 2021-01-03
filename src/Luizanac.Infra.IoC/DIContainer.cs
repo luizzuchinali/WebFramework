@@ -17,7 +17,14 @@ namespace Luizanac.Infra.IoC
 
             VerifyHierarchy(origin, destiny);
 
-            _types.Add(origin, destiny);
+        }
+
+        public void Add<TOrigin, TDestiny>() where TDestiny : TOrigin
+        {
+            if (_types.ContainsKey(typeof(TOrigin)))
+                throw new InvalidOperationException($"Type {typeof(TOrigin).Name} alredy mapped");
+
+            _types.Add(typeof(TOrigin), typeof(TDestiny));
         }
 
         private void VerifyHierarchy(Type origin, Type destiny)

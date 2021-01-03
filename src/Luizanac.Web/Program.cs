@@ -15,7 +15,7 @@ namespace Luizanac.Web
 
             webApplication.Configure(x =>
             {
-                x.Add(typeof(IExchangeService), typeof(ExchangeService));
+                x.Add<IExchangeService, ExchangeService>();
             });
 
             Console.WriteLine("Application running on: " + appUrl);
