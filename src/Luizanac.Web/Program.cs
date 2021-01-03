@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Luizanac.Infra.Http;
+using Luizanac.Service.Exchange;
+using Luizanac.Service.Interfaces;
 
 namespace Luizanac.Web
 {
@@ -12,7 +14,12 @@ namespace Luizanac.Web
             string[] prefixes = { appUrl };
             var webApplication = new WebApplication(prefixes);
 
-            Console.WriteLine("Server running on {0}", appUrl);
+            webApplication.Configure(container =>
+            {
+                container.Add(typeof(IExchangeService), typeof(ExchangeService));
+            });
+
+            Console.WriteLine("Application running on: " + appUrl);
             await webApplication.InitAsync();
         }
     }

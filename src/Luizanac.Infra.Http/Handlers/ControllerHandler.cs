@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Luizanac.Infra.Http.Abstractions.Bindings;
 using Luizanac.Infra.Http.Abstractions.Handlers;
 using Luizanac.Infra.Http.Bindings;
+using Luizanac.Infra.IoC.Abstractions.Interfaces;
 
 namespace Luizanac.Infra.Http.Handlers
 {
@@ -17,15 +18,17 @@ namespace Luizanac.Infra.Http.Handlers
     public class ControllerHandler : IAsyncHttpHandler
     {
         public HttpListenerContext HttpContext { get; }
+        private readonly IDIContainer _container;
         private readonly IActionBinder _actionBinder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ControllerHandler" /> class.
         /// </summary>
         /// <param name="httpContext"><see cref="HttpListenerContext" /></param>
-        public ControllerHandler(HttpListenerContext httpContext)
+        public ControllerHandler(HttpListenerContext httpContext, IDIContainer container)
         {
             HttpContext = httpContext;
+            _container = container;
 
             _actionBinder = new ActionBinder();
         }
@@ -51,8 +54,7 @@ namespace Luizanac.Infra.Http.Handlers
             var controllerType = controllerTypesQuery.SingleOrDefault();
             if (controllerType is not null)
             {
-                var controllerInstance = Activator.CreateInstance(controllerType, new object[] { HttpContext });
-
+                var controllerInstance = _container.Get(controllerType);
                 try
                 {
                     var action = _actionBinder.BindAction(controllerInstance, actionName, pathAndQuery);

@@ -12,12 +12,11 @@ namespace Luizanac.Infra.Http
 {
     public abstract class ControllerBase
     {
-        //Get by constructor injection
         protected HttpListenerContext HttpContext { get; private set; }
 
-        public ControllerBase(HttpListenerContext httpContext)
+        public ControllerBase()
         {
-            HttpContext = httpContext;
+            
         }
 
         /// <summary>
